@@ -39,6 +39,18 @@ export interface EmbeddingProviderConfig {
   openai?: {
     api_key?: string;             // Falls back to OPENAI_API_KEY env var
     model?: string;               // Default: 'text-embedding-3-small'
+    is_azure?: boolean;
+    deployment?: string;
+    api_version?: string;
+    base_url?: string;
+    endpoint?: string;
+    expansion_model?: string;
+    expansion_api_key?: string;
+    expansion_endpoint?: string;
+    remote?: {
+      baseUrl?: string;
+      apiKey?: string;
+    };
   };
 }
 

@@ -1565,12 +1565,12 @@ async function vectorIndex(model: string = DEFAULT_EMBED_MODEL, force: boolean =
   if (multiChunkDocs > 0) {
     console.log(`${c.dim}${multiChunkDocs} documents split into multiple chunks${c.reset}`);
   }
-  
+
   // Use OpenAI or local model based on config
   const useOpenAI = isUsingOpenAI();
   const embeddingLLM = useOpenAI ? getDefaultEmbeddingLLM() : null;
   const displayModel = useOpenAI ? embeddingLLM!.getModelName() : model;
-  
+
   console.log(`${c.dim}Model: ${displayModel}${useOpenAI ? ' (OpenAI)' : ''}${c.reset}\n`);
 
   // Hide cursor during embedding
@@ -2478,13 +2478,22 @@ if (import.meta.main) {
   // Load embedding configuration from config file or env var
   const embeddingYamlConfig = getEmbeddingConfigFromYaml();
   const useOpenAI = process.env.QMD_OPENAI === '1' || embeddingYamlConfig.provider === 'openai';
-  
+
   if (useOpenAI) {
+    const oai = embeddingYamlConfig.openai;
     setEmbeddingConfig({
       provider: 'openai',
       openai: {
-        apiKey: process.env.OPENAI_API_KEY || embeddingYamlConfig.openai?.api_key,
-        embedModel: embeddingYamlConfig.openai?.model,
+        apiKey: oai?.api_key || oai?.remote?.apiKey,
+        embedModel: oai?.model,
+        isAzure: oai?.is_azure,
+        deployment: oai?.deployment,
+        apiVersion: oai?.api_version,
+        baseURL: oai?.base_url || oai?.remote?.baseUrl,
+        endpoint: oai?.endpoint,
+        expansionModel: oai?.expansion_model,
+        expansionApiKey: oai?.expansion_api_key || process.env.AZURE_OPENAI_EXPANSION_API_KEY,
+        expansionEndpoint: oai?.expansion_endpoint || process.env.AZURE_OPENAI_EXPANSION_ENDPOINT,
       },
     });
   }
